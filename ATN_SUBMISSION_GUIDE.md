@@ -27,50 +27,97 @@ publishing it publicly so other people can install and update it easily.
 
 ## 3. Listing metadata
 
-Suggested values for the submission form:
+Values used for the actual submission:
 
 - **Name**: `Markdown Paste`
-- **Summary** (short, ~250 chars):
-  > Paste Markdown and see it instantly rendered as rich formatted text in
-  > your Thunderbird compose window. GitHub-Flavored Markdown, syntax
-  > highlighting, tables, task lists — plus a toolbar toggle to
-  > render/un-render the whole draft.
-- **Description** (long form):
+- **Summary** (short, ~250 chars, English):
+  > Paste Markdown (GitHub Flavored) into a Thunderbird compose window and
+  > see it rendered as formatted rich text instantly. Also includes a
+  > toolbar button to render/un-render the whole draft.
+- **Summary** (German / Deutsch):
+  > Markdown (GitHub Flavored) in ein Thunderbird-Compose-Fenster einfügen
+  > und sofort als formatierten Rich-Text sehen. Enthält zudem einen
+  > Symbolleisten-Button zum Rendern/Zurückverwandeln des gesamten
+  > Entwurfs.
+- **Description** (long form, English):
   > Markdown Paste lets you write emails using familiar Markdown syntax
   > and see them converted to properly formatted rich text automatically.
   >
-  > **Features**
+  > Features
   > - Paste Markdown text anywhere in a compose window (HTML/rich-text
-  >   mode) and it is instantly rendered — headings, bold/italic,
-  >   bullet & numbered lists, links, blockquotes, tables, strikethrough,
+  >   mode) and it is instantly rendered - headings, bold/italic, bullet
+  >   & numbered lists, links, blockquotes, tables, strikethrough,
   >   task-list checkboxes, and fenced code blocks with syntax
   >   highlighting (GitHub-style theme).
-  > - A toolbar button (and `Ctrl+Alt+M` shortcut) lets you render or
+  > - A toolbar button (and Ctrl+Alt+M shortcut) lets you render or
   >   un-render the entire draft at any time, so you can keep editing in
-  >   Markdown and switch to a rendered preview whenever you like.
+  >   Markdown and switch to a rendered preview whenever you like - your
+  >   original Markdown source is preserved and restored exactly, not
+  >   reconstructed.
   > - Uses the same GitHub Flavored Markdown (GFM) rules as GitHub.com,
   >   so anything that looks right in a GitHub comment will look right
   >   here.
-  > - All processing happens locally in your compose window — no network
+  > - Your signature and any other existing content are never touched -
+  >   only the Markdown you actually paste or the toggle applies to is
+  >   rendered.
+  > - All processing happens locally in your compose window - no network
   >   requests, no external services, no data collection.
   >
-  > **Privacy & permissions**
-  > This add-on only requests the `compose` permission, used to read and
+  > Privacy & permissions
+  > This add-on only requests the "compose" permission, used to read and
   > modify the content of the message you are currently composing. It
   > does not access your mail, contacts, or any other Thunderbird data,
   > and does not send any data anywhere.
   >
-  > **Independent implementation** — this add-on is a fresh, from-scratch
-  > implementation and is not affiliated with or derived from any other
-  > "Markdown Here"-style extension; it uses its own paste-interception
-  > and whole-draft toggle logic built specifically for the modern
-  > Thunderbird WebExtension APIs (`compose` permission,
-  > `messenger.composeScripts.register()`).
-- **Category**: Compose / Productivity (or whichever closest category ATN
-  offers at submission time).
+  > Independent implementation
+  > This add-on is a fresh, from-scratch implementation and is not
+  > affiliated with or derived from any other "Markdown Here"-style
+  > extension.
+  >
+  > Source code & support: https://github.com/andyesys/thunderbird-markdown-paste-extension
+- **Description** (long form, German / Deutsch):
+  > Markdown Paste ermöglicht es, E-Mails in der gewohnten
+  > Markdown-Syntax zu schreiben - der Text wird automatisch in sauber
+  > formatierten Rich-Text umgewandelt.
+  >
+  > Funktionen
+  > - Markdown-Text irgendwo in ein Compose-Fenster (HTML-/Rich-Text-Modus)
+  >   einfügen - er wird sofort gerendert: Überschriften, Fett/Kursiv,
+  >   Aufzählungs- und nummerierte Listen, Links, Zitate, Tabellen,
+  >   Durchstreichungen, Task-Listen-Checkboxen sowie Codeblöcke mit
+  >   Syntax-Hervorhebung (im GitHub-Stil).
+  > - Über einen Symbolleisten-Button (oder die Tastenkombination
+  >   Strg+Alt+M) lässt sich der gesamte Entwurf jederzeit rendern oder
+  >   wieder in Markdown zurückverwandeln - der ursprüngliche
+  >   Markdown-Quelltext wird dabei exakt gespeichert und
+  >   wiederhergestellt, nicht rekonstruiert.
+  > - Verwendet dieselben GitHub Flavored Markdown (GFM)-Regeln wie
+  >   GitHub.com - was in einem GitHub-Kommentar richtig aussieht, sieht
+  >   auch hier richtig aus.
+  > - Ihre Signatur und bereits vorhandener Inhalt werden nie verändert -
+  >   nur der tatsächlich eingefügte Markdown-Text bzw. der per
+  >   Button/Shortcut ausgewählte Bereich wird gerendert.
+  > - Die gesamte Verarbeitung erfolgt lokal im Compose-Fenster - keine
+  >   Netzwerkanfragen, keine externen Dienste, keine Datenerfassung.
+  >
+  > Datenschutz & Berechtigungen
+  > Dieses Add-on benötigt ausschließlich die Berechtigung "compose", um
+  > den Inhalt der aktuell verfassten Nachricht zu lesen und zu
+  > bearbeiten. Es greift nicht auf E-Mails, Kontakte oder andere
+  > Thunderbird-Daten zu und sendet keinerlei Daten irgendwohin.
+  >
+  > Eigenständige Implementierung
+  > Dieses Add-on ist eine komplett neu entwickelte, eigenständige
+  > Umsetzung und steht in keiner Verbindung zu und leitet sich nicht von
+  > anderen "Markdown Here"-artigen Erweiterungen ab.
+  >
+  > Quellcode & Support: https://github.com/andyesys/thunderbird-markdown-paste-extension
+- **Category**: "Nachrichten schreiben" (Compose), optionally also
+  "Anzeige und Personalisierung".
 - **License**: MIT (already declared in `manifest.json`'s repo and in the
-  `LICENSE` file — select "MIT License" in the ATN license dropdown).
+  `LICENSE` file — select "MIT/X11-Lizenz" in the ATN license dropdown).
 - **Support/homepage URL**: `https://github.com/andyesys/thunderbird-markdown-paste-extension`
+- **Help page**: `https://github.com/andyesys/thunderbird-markdown-paste-extension/issues`
 - **Source code**: since all bundled third-party libraries (`marked.js`,
   DOMPurify, highlight.js) are minified, ATN reviewers may request the
   original unminified sources or a link to them. Point reviewers to
