@@ -1,0 +1,49 @@
+{
+  "manifest_version": 2,
+  "name": "Markdown Paste",
+  "short_name": "MarkdownPaste",
+  "version": "1.0.0",
+  "description": "Paste Markdown (GitHub Flavored) into a Thunderbird compose window and see it rendered as formatted rich text instantly. Also includes a toolbar button to render/un-render the whole draft.",
+  "author": "Andreas Schönebeck",
+  "homepage_url": "https://github.com/andyesys/thunderbird-markdown-extension",
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "markdown-paste@andyesys.dev",
+      "strict_min_version": "140.0"
+    }
+  },
+
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "64": "icons/icon-64.png"
+  },
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "permissions": [
+    "compose"
+  ],
+
+  "compose_action": {
+    "default_title": "Toggle Markdown rendering (Ctrl+Alt+M)",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    },
+    "default_area": "formattoolbar"
+  },
+
+  "commands": {
+    "toggle-markdown-render": {
+      "suggested_key": {
+        "default": "Ctrl+Alt+M"
+      },
+      "description": "Render/un-render the current draft as Markdown"
+    }
+  }
+}

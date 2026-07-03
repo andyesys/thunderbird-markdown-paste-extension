@@ -1,0 +1,7 @@
+# Build artifacts — regenerate with .\package.ps1
+*.xpi
+*.zip
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
