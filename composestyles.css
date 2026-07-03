@@ -3,47 +3,65 @@
  * tuned to closely resemble how github.com renders Markdown
  * (see https://github.com/sindresorhus/github-markdown-css for reference
  * proportions/colors, reimplemented here without external dependencies).
+ *
+ * IMPORTANT: every rule below is scoped under `.markdown-paste-content`
+ * (the wrapper element composescript.js places around every block of
+ * Markdown it renders). Compose scripts inject this stylesheet into the
+ * *entire* compose document, not just our own output, so unscoped
+ * selectors like `pre` or `table` would also restyle things we did not
+ * render - e.g. Thunderbird's own fixed-width signature, which uses a
+ * plain `<pre>` element, or quoted reply content.
  */
 
 /* Headings */
-h1, h2, h3, h4, h5, h6 {
+.markdown-paste-content h1,
+.markdown-paste-content h2,
+.markdown-paste-content h3,
+.markdown-paste-content h4,
+.markdown-paste-content h5,
+.markdown-paste-content h6 {
   font-weight: 600;
   line-height: 1.25;
   margin-top: 24px;
   margin-bottom: 16px;
 }
-h1 {
+.markdown-paste-content h1 {
   font-size: 2em;
   padding-bottom: 0.3em;
   border-bottom: 1px solid #d0d7de;
 }
-h2 {
+.markdown-paste-content h2 {
   font-size: 1.5em;
   padding-bottom: 0.3em;
   border-bottom: 1px solid #d0d7de;
 }
-h3 { font-size: 1.25em; }
-h4 { font-size: 1em; }
-h5 { font-size: 0.875em; }
-h6 { font-size: 0.85em; color: #57606a; }
+.markdown-paste-content h3 { font-size: 1.25em; }
+.markdown-paste-content h4 { font-size: 1em; }
+.markdown-paste-content h5 { font-size: 0.875em; }
+.markdown-paste-content h6 { font-size: 0.85em; color: #57606a; }
 
 /* Paragraphs and spacing */
-p, blockquote, ul, ol, table, pre {
+.markdown-paste-content p,
+.markdown-paste-content blockquote,
+.markdown-paste-content ul,
+.markdown-paste-content ol,
+.markdown-paste-content table,
+.markdown-paste-content pre {
   margin-top: 0;
   margin-bottom: 16px;
 }
 
 /* Links, matching GitHub's link blue */
-a {
+.markdown-paste-content a {
   color: #0969da;
   text-decoration: none;
 }
-a:hover {
+.markdown-paste-content a:hover {
   text-decoration: underline;
 }
 
 /* Blockquotes */
-blockquote {
+.markdown-paste-content blockquote {
   padding: 0 1em;
   color: #57606a;
   border-left: 0.25em solid #d0d7de;
@@ -51,32 +69,33 @@ blockquote {
 }
 
 /* Lists */
-ul, ol {
+.markdown-paste-content ul,
+.markdown-paste-content ol {
   padding-left: 2em;
 }
-li + li {
+.markdown-paste-content li + li {
   margin-top: 0.25em;
 }
 
 /* GFM task lists */
-ul.contains-task-list,
-li.task-list-item {
+.markdown-paste-content ul.contains-task-list,
+.markdown-paste-content li.task-list-item {
   list-style: none;
 }
-li.task-list-item {
+.markdown-paste-content li.task-list-item {
   margin-left: -1.5em;
 }
-input[type="checkbox"] {
+.markdown-paste-content input[type="checkbox"] {
   margin-right: 0.5em;
 }
 
 /* Strikethrough */
-del {
+.markdown-paste-content del {
   color: #57606a;
 }
 
 /* Tables (GFM) */
-table {
+.markdown-paste-content table {
   border-collapse: collapse;
   border-spacing: 0;
   display: block;
@@ -84,23 +103,24 @@ table {
   max-width: 100%;
   overflow: auto;
 }
-table th {
+.markdown-paste-content table th {
   font-weight: 600;
 }
-table th, table td {
+.markdown-paste-content table th,
+.markdown-paste-content table td {
   padding: 6px 13px;
   border: 1px solid #d0d7de;
 }
-table tr {
+.markdown-paste-content table tr {
   background-color: #ffffff;
   border-top: 1px solid #d8dee4;
 }
-table tr:nth-child(2n) {
+.markdown-paste-content table tr:nth-child(2n) {
   background-color: #f6f8fa;
 }
 
 /* Inline code */
-code {
+.markdown-paste-content code {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   font-size: 85%;
   background-color: rgba(175, 184, 193, 0.2);
@@ -110,14 +130,14 @@ code {
 
 /* Code blocks (fenced) - highlight.js adds its own <span> coloring via the
    bundled github theme; this just styles the surrounding block chrome. */
-pre {
+.markdown-paste-content pre {
   background-color: #f6f8fa;
   border-radius: 6px;
   padding: 16px;
   overflow: auto;
   line-height: 1.45;
 }
-pre code {
+.markdown-paste-content pre code {
   background-color: transparent;
   padding: 0;
   font-size: 85%;
@@ -126,7 +146,7 @@ pre code {
 }
 
 /* Horizontal rule */
-hr {
+.markdown-paste-content hr {
   height: 0.25em;
   padding: 0;
   margin: 24px 0;
@@ -135,6 +155,6 @@ hr {
 }
 
 /* Images */
-img {
+.markdown-paste-content img {
   max-width: 100%;
 }

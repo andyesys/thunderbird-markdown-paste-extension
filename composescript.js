@@ -83,7 +83,13 @@
 
   function renderMarkdownToSafeHtml(markdownText) {
     const rawHtml = marked.parse(markdownText);
-    return DOMPurify.sanitize(rawHtml, PURIFY_CONFIG);
+    const safeHtml = DOMPurify.sanitize(rawHtml, PURIFY_CONFIG);
+    // Wrap every block of rendered Markdown in a marker element so that
+    // composestyles.css can scope its rules to content we actually
+    // rendered, instead of applying to every <pre>/<table>/<h1> etc. in
+    // the compose document (which would also restyle things like
+    // Thunderbird's own fixed-width signature <pre> block).
+    return `<div class="markdown-paste-content">${safeHtml}</div>`;
   }
 
   // ---------------------------------------------------------------------
