@@ -174,6 +174,49 @@
       .join("<br>");
   }
 
+  // Thunderbird marks the signature it auto-inserts into new/reply drafts
+  // with class="moz-signature" on its container (a <pre> for plain-text
+  // signatures, a <div> for HTML signatures). The whole-draft toggle must
+  // never treat that container as Markdown source - otherwise things like
+  // "--", email addresses, or a line of dashes in a company disclaimer get
+  // reinterpreted as GFM syntax (horizontal rules, autolinks, Setext
+  // headings), visibly mangling the signature.
+  function findSignatureElement() {
+    return document.body.querySelector(".moz-signature");
+  }
+
+  // Converts a DOM subtree to plain text, inserting "\n" at line breaks and
+  // block-level element boundaries. Deliberately does not rely on
+  // `Node.innerText`, since that requires layout and returns "" for
+  // detached fragments (needed below to read text from a cloned range that
+  // excludes the signature).
+  const BLOCK_TAGS = new Set([
+    "DIV", "P", "H1", "H2", "H3", "H4", "H5", "H6",
+    "UL", "OL", "LI", "BLOCKQUOTE", "PRE", "TABLE", "TR",
+  ]);
+  function domToPlainText(root) {
+    let text = "";
+    function walk(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        text += node.nodeValue;
+        return;
+      }
+      if (node.nodeType !== Node.ELEMENT_NODE) {
+        return;
+      }
+      if (node.tagName === "BR") {
+        text += "\n";
+        return;
+      }
+      node.childNodes.forEach(walk);
+      if (BLOCK_TAGS.has(node.tagName)) {
+        text += "\n";
+      }
+    }
+    root.childNodes.forEach(walk);
+    return text;
+  }
+
   // A draft counts as "rendered" if it contains any block we previously
   // rendered - whether that came from a live paste or a prior whole-draft
   // render. This is checked directly against the DOM (rather than a single
@@ -198,10 +241,31 @@
 
   function renderWholeDraft() {
     // Only reached when the draft has no rendered blocks yet, so the
-    // entire body is assumed to be plain Markdown source text.
-    const sourceText = document.body.innerText || document.body.textContent || "";
+    // rest of the body (everything except Thunderbird's own signature)
+    // is assumed to be plain Markdown source text.
+    const signatureEl = findSignatureElement();
+
+    if (!signatureEl) {
+      const sourceText = domToPlainText(document.body);
+      setBodyHtml(renderMarkdownToSafeHtml(sourceText));
+      return;
+    }
+
+    // Render only the portion of the body before the signature; leave the
+    // signature element itself completely untouched.
+    const range = document.createRange();
+    range.setStart(document.body, 0);
+    range.setEndBefore(signatureEl);
+
+    const sourceText = domToPlainText(range.cloneContents());
+    if (!sourceText.trim()) {
+      return; // nothing to render besides the signature itself
+    }
     const renderedHtml = renderMarkdownToSafeHtml(sourceText);
-    setBodyHtml(renderedHtml);
+
+    range.deleteContents();
+    const fragment = range.createContextualFragment(renderedHtml);
+    document.body.insertBefore(fragment, signatureEl);
   }
 
   function unrenderWholeDraft() {
