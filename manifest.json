@@ -5,7 +5,7 @@
   "version": "1.0.3",
   "description": "Paste Markdown (GitHub Flavored) into a Thunderbird compose window and see it rendered as formatted rich text instantly. Also includes a toolbar button to render/un-render the whole draft.",
   "author": "Andreas Schönebeck",
-  "homepage_url": "https://github.com/andyesys/thunderbird-markdown-extension",
+  "homepage_url": "https://github.com/andyesys/thunderbird-markdown-paste-extension",
 
   "browser_specific_settings": {
     "gecko": {

@@ -70,7 +70,7 @@ Suggested values for the submission form:
   offers at submission time).
 - **License**: MIT (already declared in `manifest.json`'s repo and in the
   `LICENSE` file — select "MIT License" in the ATN license dropdown).
-- **Support/homepage URL**: `https://github.com/andyesys/thunderbird-markdown-extension`
+- **Support/homepage URL**: `https://github.com/andyesys/thunderbird-markdown-paste-extension`
 - **Source code**: since all bundled third-party libraries (`marked.js`,
   DOMPurify, highlight.js) are minified, ATN reviewers may request the
   original unminified sources or a link to them. Point reviewers to
