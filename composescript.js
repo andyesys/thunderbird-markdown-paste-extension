@@ -15,7 +15,6 @@
 (() => {
   "use strict";
 
-  const SOURCE_STORE_ID = "markdown-paste-source-store";
   let isPlainTextMode = false;
 
   // Ask the background script whether this compose window is in plain-text
@@ -85,11 +84,16 @@
     const rawHtml = marked.parse(markdownText);
     const safeHtml = DOMPurify.sanitize(rawHtml, PURIFY_CONFIG);
     // Wrap every block of rendered Markdown in a marker element so that
-    // composestyles.css can scope its rules to content we actually
+    // (a) composestyles.css can scope its rules to content we actually
     // rendered, instead of applying to every <pre>/<table>/<h1> etc. in
     // the compose document (which would also restyle things like
-    // Thunderbird's own fixed-width signature <pre> block).
-    return `<div class="markdown-paste-content">${safeHtml}</div>`;
+    // Thunderbird's own fixed-width signature <pre> block), and
+    // (b) the toggle button can find already-rendered blocks and restore
+    // their *original* Markdown source, instead of trying to reconstruct
+    // Markdown syntax from the rendered HTML's plain-text content (which
+    // has already lost things like "##"/backticks/list markers).
+    const encodedSource = escapeHtml(markdownText);
+    return `<div class="markdown-paste-content" data-markdown-source="${encodedSource}">${safeHtml}</div>`;
   }
 
   // ---------------------------------------------------------------------
@@ -170,14 +174,19 @@
       .join("<br>");
   }
 
+  // A draft counts as "rendered" if it contains any block we previously
+  // rendered - whether that came from a live paste or a prior whole-draft
+  // render. This is checked directly against the DOM (rather than a single
+  // whole-body flag) so that content rendered via live inline paste is
+  // handled correctly too, not just content rendered via this toggle.
   function isDraftRendered() {
-    return document.body.dataset.markdownPasteRendered === "true";
+    return !!document.body.querySelector(".markdown-paste-content");
   }
 
-  // Replace the entire body content using Range.createContextualFragment +
-  // Node.replaceChildren, rather than assigning to `innerHTML`. Thunderbird's
-  // add-on review policy disallows `.innerHTML` assignment (see
-  // https://webextension-api.thunderbird.net/en/mv3/guides/innerHTML.html);
+  // Replace a node's content using Range.createContextualFragment +
+  // replaceWith/replaceChildren, rather than assigning to `innerHTML`.
+  // Thunderbird's add-on review policy disallows `.innerHTML` assignment
+  // (see https://webextension-api.thunderbird.net/en/mv3/guides/innerHTML.html);
   // this achieves the same result while only ever inserting parsed DOM
   // nodes built from already-sanitized/escaped HTML strings.
   function setBodyHtml(html) {
@@ -188,24 +197,33 @@
   }
 
   function renderWholeDraft() {
+    // Only reached when the draft has no rendered blocks yet, so the
+    // entire body is assumed to be plain Markdown source text.
     const sourceText = document.body.innerText || document.body.textContent || "";
     const renderedHtml = renderMarkdownToSafeHtml(sourceText);
-
     setBodyHtml(renderedHtml);
-
-    const sourceStore = document.createElement("div");
-    sourceStore.id = SOURCE_STORE_ID;
-    sourceStore.style.display = "none";
-    sourceStore.textContent = sourceText;
-    document.body.appendChild(sourceStore);
-    document.body.dataset.markdownPasteRendered = "true";
   }
 
   function unrenderWholeDraft() {
-    const sourceStore = document.getElementById(SOURCE_STORE_ID);
-    const sourceText = sourceStore ? sourceStore.textContent : "";
-    setBodyHtml(textToEditableHtml(sourceText));
-    delete document.body.dataset.markdownPasteRendered;
+    // Restore every previously-rendered block back to its *original*
+    // Markdown source (stored on the block itself at render time), rather
+    // than trying to reconstruct Markdown syntax from the rendered HTML's
+    // plain-text content - by the time it's rendered, headings have lost
+    // their "##", code blocks have lost their backticks/fencing, etc., so
+    // re-parsing innerText would silently flatten everything into plain
+    // paragraphs. Any plain (not-yet-rendered) text elsewhere in the
+    // draft is left untouched.
+    const renderedBlocks = Array.from(
+      document.body.querySelectorAll(".markdown-paste-content")
+    );
+    renderedBlocks.forEach((block) => {
+      const sourceText = block.dataset.markdownSource || "";
+      const plainHtml = textToEditableHtml(sourceText);
+      const range = document.createRange();
+      range.selectNode(block);
+      const fragment = range.createContextualFragment(plainHtml);
+      block.replaceWith(fragment);
+    });
   }
 
   function toggleWholeDraft() {
