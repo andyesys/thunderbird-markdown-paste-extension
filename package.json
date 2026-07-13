@@ -1,0 +1,25 @@
+{
+  "name": "markdown-paste",
+  "version": "1.0.3",
+  "private": true,
+  "description": "Test suite and dev tooling for the Markdown Paste Thunderbird extension. Not published to npm - see manifest.json for the actual add-on metadata.",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test",
+    "lint": "web-ext lint --source-dir . --ignore-files tests/** node_modules/** package.json package-lock.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andyesys/thunderbird-markdown-paste-extension.git"
+  },
+  "author": "Andreas Schönebeck",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andyesys/thunderbird-markdown-paste-extension/issues"
+  },
+  "homepage": "https://github.com/andyesys/thunderbird-markdown-paste-extension#readme",
+  "devDependencies": {
+    "jsdom": "^29.1.1"
+  }
+}
+

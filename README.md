@@ -81,6 +81,28 @@ This produces `markdown-paste.xpi` in the project root, ready for
   use the DevTools console attached to that window to see logs/errors from
   `composescript.js`.
 
+### Running the automated test suite
+
+The `tests/` folder and its `jsdom` devDependency are **dev-only** — they
+are not required to build or run the extension itself (the shipped `.xpi`
+has zero Node.js dependencies, see `BUILD.md`), and `package.ps1` never
+includes `tests/`, `node_modules/`, `package.json`, or `package-lock.json`
+in the packaged `.xpi`.
+
+```powershell
+npm install
+npm test
+```
+
+The tests load the *actual* `background.js`/`composescript.js` files (via
+jsdom + a stubbed `messenger` API) rather than reimplementing their logic,
+so they exercise the real paste-rendering, whole-draft toggle, and
+signature-exclusion behavior end-to-end. See `tests/` for coverage of:
+single-line vs. multi-line vs. block-level Markdown paste rendering,
+render/un-render round-trips, Thunderbird signature exclusion, plain-text
+compose mode, `composestyles.css` scoping, `manifest.json` validity, and
+`background.js` message wiring.
+
 ## Project structure
 
 ```
@@ -90,6 +112,7 @@ composescript.js       Runs inside the compose editor DOM: paste interception + 
 composestyles.css      GitHub-like styling for rendered Markdown output
 vendor/                 Bundled third-party libraries (marked.js, DOMPurify, highlight.js)
 icons/                  Toolbar/listing icons
+tests/                  Automated test suite (dev-only, see "Running the automated test suite")
 package.ps1             Helper script to zip the extension into an .xpi
 ATN_SUBMISSION_GUIDE.md  Steps + listing text for submitting to addons.thunderbird.net
 ```

@@ -23,8 +23,11 @@ under ATN's source policy as "external open-source libraries".
   separate install is required on Windows.
 - **No Node.js, npm, or any other toolchain is required to build the
   `.xpi`.** Node.js/npm were only used *during development* to run
-  `web-ext lint` for validation - they play no part in producing the
-  packaged add-on itself.
+  `web-ext lint` for validation and to run the automated test suite under
+  `tests/` (see `README.md`, "Running the automated test suite") - neither
+  plays any part in producing the packaged add-on itself, and
+  `package.ps1` excludes `tests/`, `node_modules/`, `package.json`, and
+  `package-lock.json` from the packaged `.xpi`.
 - **Git** (any recent version) to clone the repository.
 
 ## 2. Step-by-step: reproduce this exact package

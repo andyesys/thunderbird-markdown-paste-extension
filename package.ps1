@@ -23,8 +23,12 @@ $exclude = @(
     ".gitignore",
     "node_modules",
     "package.ps1",
+    "package.json",
+    "package-lock.json",
+    "tests",
     "markdown-paste.xpi",
-    "markdown-paste.zip"
+    "markdown-paste.zip",
+    "markdown-paste-source.zip"
 )
 
 Remove-Item $outputXpi -ErrorAction SilentlyContinue

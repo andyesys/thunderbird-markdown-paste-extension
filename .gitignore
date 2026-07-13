@@ -2,6 +2,11 @@
 *.xpi
 *.zip
 
+# Node.js dev/test tooling (package.json devDependencies) — not part of
+# the shipped extension itself; package-lock.json IS committed for
+# reproducible `npm install` / test runs.
+node_modules/
+
 # OS/editor cruft
 .DS_Store
 Thumbs.db
