@@ -37,7 +37,7 @@ under ATN's source policy as "external open-source libraries".
    ```powershell
    git clone https://github.com/andyesys/thunderbird-markdown-paste-extension.git
    cd thunderbird-markdown-paste-extension
-   git checkout v1.0.3
+   git checkout v1.0.4
    ```
 2. The `vendor/` directory in the repository already contains the exact
    third-party library builds used by this add-on. These are unmodified

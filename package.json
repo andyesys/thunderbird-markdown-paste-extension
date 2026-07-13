@@ -1,6 +1,6 @@
 {
   "name": "markdown-paste",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "description": "Test suite and dev tooling for the Markdown Paste Thunderbird extension. Not published to npm - see manifest.json for the actual add-on metadata.",
   "type": "commonjs",
