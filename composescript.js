@@ -81,8 +81,25 @@
   };
 
   function renderMarkdownToSafeHtml(markdownText) {
-    const rawHtml = marked.parse(markdownText);
+    // A single line of plain prose (e.g. an email address, URL, or a
+    // sentence with *bold*/`code`) tokenizes as one lone "paragraph"
+    // token. marked.parse() would still wrap that in a block-level <p>,
+    // which - once inserted at the caret inside existing inline text -
+    // forces a line break before/after it, even though the user only
+    // pasted an inline fragment. Detect that case and use
+    // marked.parseInline() instead, which produces bare inline markup
+    // (links, <strong>, <code>, etc.) with no surrounding <p>. Actual
+    // block-level pastes (headings, lists, tables, code fences, multiple
+    // paragraphs, ...) still go through the normal block parser, since
+    // those inherently need their own line(s) anyway.
+    const tokens = marked.lexer(markdownText).filter((t) => t.type !== "space");
+    const isInlineOnly = tokens.length === 1 && tokens[0].type === "paragraph";
+
+    const rawHtml = isInlineOnly
+      ? marked.parseInline(markdownText)
+      : marked.parser(tokens);
     const safeHtml = DOMPurify.sanitize(rawHtml, PURIFY_CONFIG);
+
     // Wrap every block of rendered Markdown in a marker element so that
     // (a) composestyles.css can scope its rules to content we actually
     // rendered, instead of applying to every <pre>/<table>/<h1> etc. in
@@ -92,8 +109,11 @@
     // their *original* Markdown source, instead of trying to reconstruct
     // Markdown syntax from the rendered HTML's plain-text content (which
     // has already lost things like "##"/backticks/list markers).
+    // An inline-only result is wrapped in a <span> (not <div>) so it
+    // never introduces a block-level line break of its own either.
+    const wrapperTag = isInlineOnly ? "span" : "div";
     const encodedSource = escapeHtml(markdownText);
-    return `<div class="markdown-paste-content" data-markdown-source="${encodedSource}">${safeHtml}</div>`;
+    return `<${wrapperTag} class="markdown-paste-content" data-markdown-source="${encodedSource}">${safeHtml}</${wrapperTag}>`;
   }
 
   // ---------------------------------------------------------------------
@@ -247,6 +267,9 @@
 
     if (!signatureEl) {
       const sourceText = domToPlainText(document.body);
+      if (!sourceText.trim()) {
+        return; // empty draft - nothing to render, avoid an empty wrapper
+      }
       setBodyHtml(renderMarkdownToSafeHtml(sourceText));
       return;
     }
