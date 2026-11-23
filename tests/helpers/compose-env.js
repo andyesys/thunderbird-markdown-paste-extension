@@ -51,6 +51,29 @@ function loadComposeEnv({ isPlainTextMode = false } = {}) {
   const document = window.document;
   document.designMode = "on";
 
+  // jsdom has no native edit commands or undo manager. Simulate only the
+  // insertHTML DOM effect so the original rendering tests can still exercise
+  // the extension. Real undo/redo needs a browser/Thunderbird integration test.
+  if (typeof document.execCommand !== "function") {
+    document.execCommand = (command, _showUI, html) => {
+      if (command !== "insertHTML") return false;
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return false;
+      const range = selection.getRangeAt(0);
+      range.deleteContents();
+      const fragment = range.createContextualFragment(html);
+      const lastNode = fragment.lastChild;
+      range.insertNode(fragment);
+      if (lastNode) {
+        range.setStartAfter(lastNode);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      return true;
+    };
+  }
+
   let toggleListener = null;
   window.messenger = {
     runtime: {
