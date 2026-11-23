@@ -158,3 +158,85 @@
 .markdown-paste-content img {
   max-width: 100%;
 }
+
+/* Keep the existing GitHub light palette, but use GitHub's darker contrast
+   palette when the compose editor prefers a dark color scheme. This CSS is
+   editor-only: it is not injected into outgoing mail or the recipient view.
+   All selectors remain scoped to rendered Markdown, never to signatures. */
+@media (prefers-color-scheme: dark) {
+  .markdown-paste-content h1,
+  .markdown-paste-content h2 {
+    border-bottom-color: #30363d;
+  }
+  .markdown-paste-content h6,
+  .markdown-paste-content blockquote,
+  .markdown-paste-content del { color: #8b949e; }
+  .markdown-paste-content a { color: #58a6ff; }
+  .markdown-paste-content blockquote { border-left-color: #30363d; }
+  .markdown-paste-content table th,
+  .markdown-paste-content table td { border-color: #30363d; }
+  .markdown-paste-content table tr {
+    background-color: transparent;
+    border-top-color: #30363d;
+  }
+  .markdown-paste-content table tr:nth-child(2n) {
+    background-color: #161b22;
+  }
+  .markdown-paste-content pre {
+    background-color: #161b22;
+    color: #c9d1d9;
+  }
+  /* The bundled highlight.js theme is light-only and forces a white
+     background and dark token colors. Override only inside our output. */
+  .markdown-paste-content pre code.hljs {
+    color: #c9d1d9;
+    background-color: transparent;
+  }
+  .markdown-paste-content .hljs-doctag,
+  .markdown-paste-content .hljs-keyword,
+  .markdown-paste-content .hljs-meta .hljs-keyword,
+  .markdown-paste-content .hljs-template-tag,
+  .markdown-paste-content .hljs-template-variable,
+  .markdown-paste-content .hljs-type,
+  .markdown-paste-content .hljs-variable.language_ { color: #ff7b72; }
+  .markdown-paste-content .hljs-title,
+  .markdown-paste-content .hljs-title.class_,
+  .markdown-paste-content .hljs-title.class_.inherited__,
+  .markdown-paste-content .hljs-title.function_ { color: #d2a8ff; }
+  .markdown-paste-content .hljs-attr,
+  .markdown-paste-content .hljs-attribute,
+  .markdown-paste-content .hljs-literal,
+  .markdown-paste-content .hljs-meta,
+  .markdown-paste-content .hljs-number,
+  .markdown-paste-content .hljs-operator,
+  .markdown-paste-content .hljs-selector-attr,
+  .markdown-paste-content .hljs-selector-class,
+  .markdown-paste-content .hljs-selector-id,
+  .markdown-paste-content .hljs-variable,
+  .markdown-paste-content .hljs-section { color: #79c0ff; }
+  .markdown-paste-content .hljs-meta .hljs-string,
+  .markdown-paste-content .hljs-regexp,
+  .markdown-paste-content .hljs-string { color: #a5d6ff; }
+  .markdown-paste-content .hljs-built_in,
+  .markdown-paste-content .hljs-symbol { color: #ffa657; }
+  .markdown-paste-content .hljs-code,
+  .markdown-paste-content .hljs-comment,
+  .markdown-paste-content .hljs-formula { color: #8b949e; }
+  .markdown-paste-content .hljs-name,
+  .markdown-paste-content .hljs-quote,
+  .markdown-paste-content .hljs-selector-pseudo,
+  .markdown-paste-content .hljs-selector-tag { color: #7ee787; }
+  .markdown-paste-content .hljs-subst,
+  .markdown-paste-content .hljs-emphasis,
+  .markdown-paste-content .hljs-strong { color: #c9d1d9; }
+  .markdown-paste-content .hljs-bullet { color: #e3b341; }
+  .markdown-paste-content .hljs-addition {
+    color: #aff5b4;
+    background-color: #033a16;
+  }
+  .markdown-paste-content .hljs-deletion {
+    color: #ffdcd7;
+    background-color: #67060c;
+  }
+  .markdown-paste-content hr { background-color: #30363d; }
+}
