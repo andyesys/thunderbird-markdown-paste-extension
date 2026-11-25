@@ -117,27 +117,35 @@
   }
 
   // ---------------------------------------------------------------------
-  // Caret-preserving HTML insertion (modern Selection/Range API; the older
-  // document.execCommand('insertHTML', ...) is deprecated per MDN).
+  // Native-editing HTML insertion. Although execCommand is deprecated, its
+  // insertHTML command participates in Thunderbird/Gecko's editor undo stack.
+  // Range.insertNode() changes the DOM outside that stack (see issue #1).
   // ---------------------------------------------------------------------
 
   function insertHtmlAtCaret(html) {
+    // Some native editors join inserted block content to a following
+    // signature <pre>. Keep the signature outside the editable region for
+    // this transaction, unless the user is explicitly editing it.
+    const signature = findSignatureElement();
     const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) {
-      return;
-    }
-    const range = selection.getRangeAt(0);
-    range.deleteContents();
-
-    const fragment = range.createContextualFragment(html);
-    const lastNode = fragment.lastChild;
-    range.insertNode(fragment);
-
-    if (lastNode) {
-      range.setStartAfter(lastNode);
-      range.collapse(true);
-      selection.removeAllRanges();
-      selection.addRange(range);
+    const editingSignature = signature && selection && (
+      signature.contains(selection.anchorNode) ||
+      signature.contains(selection.focusNode)
+    );
+    const protect = signature && !editingSignature;
+    const previousEditable = protect ? signature.getAttribute("contenteditable") : null;
+    if (protect) signature.setAttribute("contenteditable", "false");
+    try {
+      // Returning false lets the normal paste proceed instead of silently
+      // discarding clipboard data if the editor rejects the insertion.
+      return !!document.execCommand("insertHTML", false, html);
+    } catch (_err) {
+      return false;
+    } finally {
+      if (protect) {
+        if (previousEditable === null) signature.removeAttribute("contenteditable");
+        else signature.setAttribute("contenteditable", previousEditable);
+      }
     }
   }
 
@@ -169,16 +177,26 @@
       if (!clipboardData) {
         return;
       }
+      // A rich HTML clipboard entry is already formatted. Do not replace it
+      // with its text/plain counterpart and discard links/styles (issue #6).
+      // Likewise leave files/images to Thunderbird's native paste handler.
+      const types = Array.from(clipboardData.types || []);
+      if (types.includes("text/html") || types.includes("Files") ||
+          types.some((type) => type.startsWith("image/")) ||
+          clipboardData.getData("text/html")) {
+        return;
+      }
       const text = clipboardData.getData("text/plain");
       if (!text) {
         return; // e.g. a pasted image with no text representation
       }
 
-      event.preventDefault();
-      event.stopPropagation();
-
+      // Never cancel the native paste unless our own insertion succeeded.
       const safeHtml = renderMarkdownToSafeHtml(text);
-      insertHtmlAtCaret(safeHtml);
+      if (insertHtmlAtCaret(safeHtml)) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
     },
     true
   );
